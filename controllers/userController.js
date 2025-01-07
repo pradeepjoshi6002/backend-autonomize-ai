@@ -98,4 +98,70 @@ const searchUsers = async (req, res) => {
   }
 };
 
-module.exports = { addUser, findFriends, searchUsers };
+const softDeleteUser = async (req, res) => {
+  const { username } = req.params;
+  try {
+    const user = await User.findOne({ where: { username } });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    user.is_deleted = true;
+    await user.save();
+    res.status(200).json({ message: "User soft deleted" });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Error deleting user", error: err.message });
+  }
+};
+
+const updateUser = async (req, res) => {
+  const { username } = req.params;
+  const { location, blog, bio } = req.body;
+
+  try {
+    const user = await User.findOne({ where: { username, is_deleted: false } });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (location) {
+      user.location = location;
+    }
+    if (blog) {
+      user.blog;
+    }
+    if (bio) {
+      user.bio = bio;
+    }
+    await user.save();
+    return res.status(200).json({ message: "User updated", data: user });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Error updating user", error: err.message });
+  }
+};
+
+const listUsers = async (req, res) => {
+  const { sortBy } = req.query;
+  try {
+    const users = await User.findAll({
+      where: { is_deleted: false },
+      order: [[sortBy || "created_at", "ASC"]],
+    });
+    res.status(200).json({ users });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Error fetching users", error: err.message });
+  }
+};
+
+module.exports = {
+  addUser,
+  findFriends,
+  searchUsers,
+  softDeleteUser,
+  updateUser,
+  listUsers,
+};
