@@ -2,14 +2,16 @@ const http = require("http");
 const express = require("express");
 const bodyParser = require("body-parser");
 const sequelize = require("./db/sequelize");
+const userRoutes = require("./routers/userRoutes");
+require("dotenv").config();
 
 const PORT = process.env.PORT || 4004;
-
-require("dotenv").config();
 
 const app = express();
 
 app.use(bodyParser.json());
+
+app.use("/users", userRoutes);
 
 sequelize
   .sync()
