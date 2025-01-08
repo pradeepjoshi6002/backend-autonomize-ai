@@ -1,0 +1,19 @@
+API Endpoints
+
+Save GitHub user details.
+POST /users/
+
+Find mutual friends.
+GET /users/:username/friends
+
+Search users by criteria.
+GET /users/search
+
+Soft delete user by username.
+DELETE /users/:username
+
+Update user fields (e.g., location, bio).
+PUT /users/:username
+
+List all users sorted by fields (e.g., public_repos).
+GET /users/

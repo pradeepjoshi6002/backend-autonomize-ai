@@ -3,12 +3,13 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const sequelize = require("./db/sequelize");
 const userRoutes = require("./routers/userRoutes");
+const cors = require("cors");
 require("dotenv").config();
 
 const PORT = process.env.PORT || 4004;
 
 const app = express();
-
+app.use(cors());
 app.use(bodyParser.json());
 
 app.use("/users", userRoutes);
