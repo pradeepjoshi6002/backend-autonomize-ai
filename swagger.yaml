@@ -1,0 +1,136 @@
+openapi: 3.0.0
+info:
+  title: "GitHub Search API"
+  description: "This API is built as an assignment for Autonomize AI. It allows user management using data fetched from GitHub."
+  version: "1.0.0"
+servers:
+  # - url: "http://localhost:4001/"
+  - url: "https://backend-autonomize-ai.onrender.com/"
+paths:
+  /users:
+    post:
+      summary: Add a new user
+      description: Adds a new user by fetching data from GitHub based on the provided username.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "octocat"
+      responses:
+        "201":
+          description: User added successfully
+        "200":
+          description: User already exists
+        "500":
+          description: Error fetching GitHub user
+
+    get:
+      summary: List all users
+      description: Fetches all users, optionally sorted by a specified field.
+      parameters:
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+          description: The field to sort by (default: created_at).
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        "500":
+          description: Error fetching users
+
+  /users/{username}/friends:
+    get:
+      summary: Find friends of a user
+      description: Fetches the list of mutual followers of the specified user.
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of friends
+        "404":
+          description: User not found
+        "500":
+          description: Error finding friends
+
+  /users/search:
+    get:
+      summary: Search users
+      description: Search for users by username and/or location.
+      parameters:
+        - name: username
+          in: query
+          schema:
+            type: string
+        - name: location
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of users
+        "500":
+          description: Error searching users
+
+  /users/{username}:
+    delete:
+      summary: Soft delete a user
+      description: Marks a user as deleted without removing them from the database.
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User soft deleted
+        "404":
+          description: User not found
+        "500":
+          description: Error deleting user
+
+    put:
+      summary: Update a user
+      description: Updates user information such as location, blog, and bio.
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                location:
+                  type: string
+                blog:
+                  type: string
+                bio:
+                  type: string
+      responses:
+        "200":
+          description: User updated successfully
+        "404":
+          description: User not found
+        "500":
+          description: Error updating user
